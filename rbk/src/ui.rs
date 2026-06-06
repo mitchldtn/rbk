@@ -1,7 +1,7 @@
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
-use ratatui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph, Wrap};
+use ratatui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph};
 use ratatui::Frame;
 
 use crate::app::{App, Mode, SidebarLevel};
@@ -368,7 +368,6 @@ fn render_note_blocks(frame: &mut Frame, app: &App, area: Rect, note: &Note, foc
     };
 
     let para = Paragraph::new(lines)
-        .wrap(Wrap { trim: false })
         .scroll((scroll, 0));
     frame.render_widget(para, area);
 }
@@ -427,10 +426,31 @@ fn build_note_lines(body: &str, focused_block: usize, width: u16) -> (Vec<Line<'
             } else {
                 Style::default().fg(Color::Gray)
             };
-            lines.push(Line::from(vec![
-                Span::styled(" \u{2502} ", Style::default().fg(Color::DarkGray)),
-                Span::styled(line.to_string(), code_style),
-            ]));
+            let max_content = w.saturating_sub(3);
+            let cont_indent = "  ";
+            let cont_width = max_content.saturating_sub(cont_indent.len());
+            let mut wrapped: Vec<String> = Vec::new();
+            let mut current = String::new();
+            for word in line.split(' ') {
+                let max = if wrapped.is_empty() { max_content } else { cont_width };
+                if current.is_empty() {
+                    current = word.to_string();
+                } else if current.len() + 1 + word.len() <= max {
+                    current.push(' ');
+                    current.push_str(word);
+                } else {
+                    wrapped.push(current);
+                    current = word.to_string();
+                }
+            }
+            if !current.is_empty() { wrapped.push(current); }
+            for (i, chunk) in wrapped.iter().enumerate() {
+                let text = if i == 0 { chunk.clone() } else { format!("{cont_indent}{chunk}") };
+                lines.push(Line::from(vec![
+                    Span::styled(" \u{2502} ", Style::default().fg(Color::DarkGray)),
+                    Span::styled(text, code_style),
+                ]));
+            }
         } else {
             lines.push(style_markdown_line(line));
         }

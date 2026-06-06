@@ -86,7 +86,6 @@ fn event_loop(
                         continue;
                     }
 
-                    // Capture whether we should spawn after handling the key
                     let should_spawn = should_spawn_terminal(app, &key);
 
                     let was_template = matches!(app.mode, Mode::TemplateInput { .. });
