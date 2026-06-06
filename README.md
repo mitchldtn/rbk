@@ -51,8 +51,11 @@ NODE_ENV = development
 AWS_PROFILE = staging
 
 [script]
-echo "ready"
-nvm use 20
+echo "project ready"
+
+greet() {
+  echo "hey $1, welcome to $(basename $PWD)"
+}
 ```
 
 | Field | Description |
