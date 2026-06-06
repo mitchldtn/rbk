@@ -1,0 +1,19 @@
+[workspace]
+members = ["core", "ntx"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+portable-pty = "0.8"
+vt100 = "0.15"
+dirs = "5"
+chrono = { version = "0.4", features = ["serde"] }
+
+[patch.crates-io]
+vt100 = { path = "vendor/vt100" }

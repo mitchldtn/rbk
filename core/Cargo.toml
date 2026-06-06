@@ -1,0 +1,14 @@
+[package]
+name = "ntx-core"
+description = "Core library for ntx: PTY management, vt100 parsing, session config, notes"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+portable-pty.workspace = true
+vt100.workspace = true
+dirs.workspace = true
+chrono.workspace = true
